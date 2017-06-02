@@ -1,0 +1,61 @@
+html, body, #map-canvas { 
+	height: 100%; 
+	margin: 0; 
+	padding: 0;
+}
+
+#header {
+	position: absolute; 
+	height: 50px;
+	width: 100%;
+	top: 0px; 
+	left: 0px; 
+	z-index: 99; 
+	background-color: #000000;
+	opacity: 0.5;
+}
+
+#wrapper { position: relative; height: 100%;}
+
+.listbox {
+	/*border: 1px solid black; */
+	margin-top: 8px; 
+	/*background: #000000; */
+	padding: 5px;
+}
+
+.listbox div {
+  margin: 20px;
+}
+ 
+.listbox ul {
+  list-style-type: none;
+  width: 500px;
+}
+ 
+.listbox h3 {
+  font: bold 20px/1.5 Helvetica, Verdana, sans-serif;
+  color: #eee;
+}
+ 
+.listbox li img {
+  float: left;
+  opacity: 1;
+  margin: 0 15px 0 0;
+}
+ 
+.listbox li p {
+  font: 200 12px/1.5 Georgia, Times New Roman, serif;
+  color: #aaa;
+}
+ 
+.listbox li {
+  padding: 10px;
+  overflow: auto;
+}
+ 
+.listbox li:hover {
+  background: #eee;
+  cursor: pointer;
+  opacity: 0.5
+}

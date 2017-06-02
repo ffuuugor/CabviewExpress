@@ -1,29 +1,39 @@
 __author__ = 'ffuuugor'
 
 from googleapiclient.discovery import build
-from geo import CityExtractor
+from config import DEVELOPER_KEY, YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION
 import isodate
 
-YOUTUBE_API_SERVICE_NAME = "youtube"
-YOUTUBE_API_VERSION = "v3"
 
 class Video:
 
     def __init__(self, title, thumb, id, duration):
-        self.title = title;
-        self.thumb = thumb;
-        self.id = id;
-        self.duration = duration;
+        self.title = title.encode("utf-8")
+        self.thumb = thumb
+        self.id = id
+        self.duration = duration
 
-        self.from_city = None;
-        self.to_city = None;
+    def _make_url(self):
+        return "http://www.youtube.com/watch?v={}".format(self.id)
 
-#def _parse_duration(duration_str):
+    def _make_embed(self):
+        return "<a href={url} target=_blank><img src={thumb}></a> {title}".format(url=self._make_url(),
+                                                                                  thumb=self.thumb,
+                                                                                  title=self.title)
+
+    def to_json(self):
+        return {"title": self.title,
+                "thumb": self.thumb,
+                "id": self.id,
+                "duration": self.duration,
+                "url": self._make_url(),
+                "embed": self._make_embed()}
+
 
 def youtube_search(query, pages=1):
 
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-        developerKey=DEVELOPER_KEY)
+                    developerKey=DEVELOPER_KEY)
 
     next_page_token=None
 
@@ -61,4 +71,4 @@ def youtube_search(query, pages=1):
     return ret
 
 if __name__ == "__main__":
-    youtube_search("cabview")
+    print youtube_search("cabview")

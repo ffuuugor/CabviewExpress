@@ -2,5 +2,7 @@ app/crawler/config_local.py
 app/crawler/data
 data.json
 *_local.py
+*.pyc
 .venv
 .idea
+.DS_Store
