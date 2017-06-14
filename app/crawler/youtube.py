@@ -57,7 +57,7 @@ def youtube_search(query, pages=1):
 
         for video_info in videos_response.get("items"):
             title = video_info["snippet"]["title"]
-            thumb = video_info["snippet"]["thumbnails"]["default"]["url"]
+            thumb = video_info["snippet"]["thumbnails"]["medium"]["url"]
             id = video_info["id"]
             duration = isodate.parse_duration(video_info["contentDetails"]["duration"]).seconds
 

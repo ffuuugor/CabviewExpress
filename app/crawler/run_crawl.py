@@ -10,26 +10,33 @@ from config import DATA_DIR, CITIES_PATH, QUERY_LIST
 import logging
 from collections import defaultdict
 from route import build_route
+from itertools import count
+import polyline
+from merger import merge_paths
+import pickle
 
 extractor = RouteExtractor(CITIES_PATH)
 logger = logging.getLogger(__name__)
 
 
-class RouteVideo:
+class Ride:
+    _get_id = count(0).next
 
     def __init__(self, route, video):
         self.route = route
         self.video = video
+        self.id = self._get_id()
 
     def to_json(self):
-        return {"id": self.route.id,
+        return {"id": self.id,
                 "path": self.route.path,
+                "from": self.route.city_from.to_json(),
+                "to": self.route.city_to.to_json(),
                 "video": self.video.to_json()}
 
 
-def process_videos(query_list=QUERY_LIST, pages=10):
-    routes = []
-    cities = defaultdict(list)
+def make_rides(query_list=QUERY_LIST, pages=10):
+    rides = []
 
     for query in query_list:
         for video in youtube_search(query, pages):
@@ -39,26 +46,65 @@ def process_videos(query_list=QUERY_LIST, pages=10):
                 city_from, city_to = route_cities
                 route = build_route(city_from, city_to)
                 if route:
-                    route_video = RouteVideo(route, video)
-
-                    cities[city_from].append(route_video)
-                    cities[city_to].append(route_video)
-                    routes.append(route_video)
+                    rides.append(Ride(route, video))
 
             else:
                 logger.info("Failed to extract route from '{}'".format(video.title))
 
-    return cities, routes
+    return rides
 
 
-def json_format(cities, routes):
-    return {"cities": [{"city": city.to_json(),
-                        "routes": [route.to_json() for route in city_routes]}
-                       for city, city_routes in cities.items()],
-            "routes": [route.to_json() for route in routes]}
+def group_by_segments(rides):
+    segments = defaultdict(list)
+    for ride in rides:
+        points = polyline.decode(ride.route.path)
+        for i in range(0, len(points)-1):
+            src = points[i]
+            dst = points[i+1]
+
+            segments[_sorted_tuple((src, dst))].append(ride)
+
+    logger.info("Got {} distinct segments".format(len(segments)))
+
+    return [(polyline.encode([src, dst]), rides) for (src, dst), rides in segments.items()]
+
+
+def _sorted_tuple(tpl):
+    return tuple(sorted(tpl))
+
+
+def json_format(rides, segments):
+    return {
+        "segments":[
+            {
+                "path": spath,
+                "ride_ids": [ride.id for ride in srides]
+            } for spath, srides in segments
+        ],
+        "rides": [ride.to_json() for ride in rides]
+    }
+
+
+def run():
+    # rides = make_rides(["cabview"], 2)
+    rides = pickle.load(open("rides.pickle"))
+
+    all_points = [wp for ride in rides for wp in ride.route.waypoints]
+    all_points = [(p.lat, p.lng) for p in all_points]
+    print len(set(all_points))
+
+    merge_paths(rides)
+
+    all_points = [wp for ride in rides for wp in ride.route.waypoints]
+    all_points = [(p.lat, p.lng) for p in all_points]
+    print len(set(all_points))
+
+    segments = group_by_segments(rides)
+    return json_format(rides, segments)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    cities, routes = process_videos(["cabview"], 2)
-    print json.dumps(json_format(cities, routes), indent=4)
+
+    json.dumps(run(), indent=4)
+

@@ -2,14 +2,12 @@
 
 __author__ = 'ffuuugor'
 import nltk
-from geopy.geocoders import Nominatim
 from geopy.distance import vincenty
 import codecs
 from collections import defaultdict
 import os
 from config import DATA_DIR
 
-geocoder = Nominatim()
 MIN_SPEED = 15  #km/h
 MAX_SPEED = 250 #km/h
 
@@ -48,7 +46,8 @@ class City:
                 "lat": self.latitude,
                 "lng": self.longitude
             },
-            "name": self.main_name
+            "name": self.main_name,
+            "country": self.country
         }
 
     def get_point(self):
