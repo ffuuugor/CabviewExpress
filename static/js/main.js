@@ -1,28 +1,80 @@
-var lastInfoWindow = null
+var rides = {};
+
+var mapOptions = {
+    center: { lat: 50.912262, lng: 8.512218},
+    scrollwheel: true,
+    zoom: 6,
+    disableDefaultUI: true,
+    mapTypeControlOptions: {
+        mapTypeIds: ['styled_map']
+    }
+}
+
+var visiblePolyOptions = {
+    strokeColor: '#0a0175',
+    strokeOpacity: 0.2,
+    strokeWeight: 6
+}
+
+var redPolyOptions = {
+    strokeColor: '#e87306',
+    strokeOpacity: 1,
+    strokeWeight: 6,
+    zIndex: 100
+}
+
+var invisiblePolyOptions = {
+    strokeColor: '#0a0175',
+    strokeOpacity: 0,
+    strokeWeight: 6,
+    zIndex: 2
+}
+
+Number.prototype.toHHMMSS = function () {
+    var sec_num = parseInt(this, 10); // don't forget the second param
+    var hours   = Math.floor(sec_num / 3600);
+    var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+    var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+    if (hours   < 10) {hours   = "0"+hours;}
+    if (minutes < 10) {minutes = "0"+minutes;}
+    if (seconds < 10) {seconds = "0"+seconds;}
+    var time    = hours+':'+minutes+':'+seconds;
+    return time;
+}
 
 function initialize() {
 
+    $("#close").click(function() {
+        $('#vidlist').animate(
+            {
+                right:"-35%"
+            },
+            {
+                complete:function() {$("#open").show();$("#close").hide()}
+            }
+        );
+    })
 
-    var mapOptions = {
-        center: { lat: 50.912262, lng: 8.512218},
-        scrollwheel: true,
-        zoom: 6,
-        disableDefaultUI: true
-    }
+    $("#open").click(function() {
+        $('#vidlist').animate({right:0});
+        $("#close").show()
+        $("#open").hide()
+    })
 
-    var polyOptions = {
-        strokeColor: '#0a0175',
-        strokeOpacity: 0.3,
-        strokeWeight: 6
-    }
+    $("#info").click(function() {
+        console.log("ololo")
+        $("#contactsLayer").show()
+    })
 
-    var polyOptions2 = {
-        strokeColor: '#0a0175',
-        strokeOpacity: 0,
-        strokeWeight: 6
-    }
+    $("#cross").click(function() {
+        $("#contactsLayer").hide()
+    })
 
+    var styledMapType = new google.maps.StyledMapType(map_style);
     var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    map.mapTypes.set('styled_map', styledMapType);
+    map.setMapTypeId('styled_map');
 
     $(document).on("mouseenter", ".infoBox", function(){
         map.setOptions( {scrollwheel:false} ); 
@@ -37,32 +89,40 @@ function initialize() {
     })
 
     $.ajax({
-        url: "/static/test_data4.json",
+        url: "/static/final_rides.json",
         dataType: "json",
         success: function(data){
-            var rides = data["rides"]
 
+            for (var i = 0; i < data.length; i++) {
+                var ride = data[i]
 
-            for (var i = 0; i < rides.length; i++) {
-                var path = google.maps.geometry.encoding.decodePath(rides[i]["path"])
-                var poly = new google.maps.Polyline(polyOptions)
+                var path = google.maps.geometry.encoding.decodePath(ride["path"])
+                var poly = new google.maps.Polyline(visiblePolyOptions)
 
                 poly.setMap(map)
                 poly.setPath(path)
+
+                rides[ride.id] = ride;
+
             }
+        }
+    })
 
-            // var infos = data["info"]
+    $.ajax({
+        url: "/static/final_segments.json",
+        dataType: "json",
+        success: function(data){
+            for (var i = 0; i < data.length; i++) {
+                var segment = data[i]
 
-            // for (var i = 0; i < infos.length; i++) {
-            //     var path = google.maps.geometry.encoding.decodePath(infos[i]["path"])
+                var path = google.maps.geometry.encoding.decodePath(segment["path"])
+                var poly = new google.maps.Polyline(invisiblePolyOptions)
 
-            //     var poly = new google.maps.Polyline(polyOptions2)
+                poly.setMap(map)
+                poly.setPath(path)
 
-            //     poly.setMap(map)
-            //     poly.setPath(path)
-
-            //     attachWindow(map, poly, infos[i]["videos"])
-            // }
+                attachWindow(map, poly, segment["ride_ids"])
+            }
         }
     })
 }
@@ -82,53 +142,62 @@ function drawMarker(map, lat, lng, opacity) {
     })   
 }
 
-function attachWindow(map, poly, videos) {
+function attachWindow(map, poly, ride_ids) {
     var ib;
     google.maps.event.addListener(poly, 'click', function(event) {
-        // if (lastInfoWindow != null) {
-        //     lastInfoWindow.close()
-        // }
 
-        // var infowindow = new google.maps.InfoWindow({
-        //     content: content,
-        //     position: event.latLng,
-        //     map: map
-        // })
+        $("#listid").empty()
 
-        // lastInfoWindow = infowindow
 
-        var parent = $("<div/>")
-        var list = $("<ul/>", {"class":"listbox", "id":"listid"})
+        for (var i = 0; i < ride_ids.length; i++) {
+            var video = rides[ride_ids[i]]["video"]
+            var from_city = rides[ride_ids[i]]["from"]
+            var to_city = rides[ride_ids[i]]["to"]
 
-        for (var i = 0; i < videos.length; i++) {
-            var video = videos[i]
-            var elem = $("<li/>")
-                .append($("<img/>", {"src": video["thumb"], "height":150, "width":200}))
-                .append($("<h3/>").text("Amsterdam - Paris"))
-                .append($("<p/>").text(video["title"]))
+            var elem = $("<a/>", {"href": video["url"], "target":"_blank"}).append(
+                $("<li/>")
+                    .append(
+                        $("<div/>", {"class": "image"}).append(
+                            $("<img/>", {"src": video["thumb"], "height":150, "width":200})
+                        ).append(
+                            $("<div/>", {"class": "description"}).append(
+                                $("<p/>", {"class": "description_content"}).text(video["duration"].toHHMMSS())
+                            )
+                        )
+                    )
+                    .append($("<h3/>").text(`${from_city.name} - ${to_city.name}`))
+                    .append($("<p/>").text(video["title"]))
+                )
 
-            list.append(elem)
+
+            attachFullRoute(map, elem, rides[ride_ids[i]]["path"])
+
+
+            $("#listid").append(elem)
         }
-        parent.append(list)
 
-        var myOptions = {
-            content: parent.html(),
-            position: event.latLng,
-            closeBoxMargin: "4px -46px 2px 2px",
-            closeBoxURL: '/static/cross.png',
-            enableEventPropagation: true
-        };
+        $('#vidlist').animate({right:0});
+        if ($("#open").is(":visible")) {
+            $("#close").show()
+            $("#open").hide()    
+        }
 
-        ib = new InfoBox(myOptions);
-        ib.open(map);
-
-        google.maps.event.addListener(ib,'closeclick',function(){
-           map.setOptions( {scrollwheel:true} ); 
-        });  
     }) 
+}
 
-    
+function attachFullRoute(map, elem, path) {
+    var path = google.maps.geometry.encoding.decodePath(path)
+    var poly = new google.maps.Polyline(redPolyOptions)
+    poly.setPath(path)
 
+    elem.mouseenter(function(){
+        poly.setMap(map)
+        
+    })
+
+    elem.mouseleave(function(){
+        poly.setMap(null)
+    })    
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);

@@ -2,7 +2,83 @@ html, body, #map-canvas {
 	height: 100%; 
 	margin: 0; 
 	padding: 0;
+
+  max-width: 100%;
+  overflow-x: hidden;
 }
+
+#contactsLayer {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+}
+
+#cross {
+  display: inline-block;
+  float: right;
+}
+
+#contactsLayer {
+  display: none;
+}
+
+#contactsWindow {
+  position: absolute;
+  top: 20%;
+  bottom: 20%;
+  left: 20%;
+  right: 20%;
+  background-color: #000000;
+  font: 200 18px/1.5 Helvetica, Verdana, sans-serif;
+  color: #ffffff;
+  padding: 20px;
+  overflow: auto;
+}
+
+#contactsWindow a {
+  text-decoration:  underline;
+  color: #ffffff;
+}
+
+#contactsWindow p {
+  margin: 10px;
+  font: 200 16px/1.5 Helvetica, Verdana, sans-serif;
+}
+
+a {
+  text-decoration:  none;
+  color: #000000;
+} 
+
+.image {
+  margin: 0;
+}
+
+div.image{
+  float:left; /* important */
+  position:relative; /* important(so we can absolutely position the description div */
+}
+div.description{
+  position:absolute; /* absolute position (so we can position it where we want)*/
+  bottom:0px; /* position will be on bottom */
+  right:0px;
+  margin-right: 20px;
+  /* styling bellow */
+  background-color:black;
+  color:white;
+  opacity:0.9; /* transparency */
+  filter:alpha(opacity=90); /* IE transparency */
+}
+p.description_content{
+  padding:2px;
+  margin:0px;
+  font-size: 30px;
+}
+
 
 #header {
 	position: absolute; 
@@ -10,9 +86,61 @@ html, body, #map-canvas {
 	width: 100%;
 	top: 0px; 
 	left: 0px; 
-	z-index: 99; 
-	background-color: #000000;
-	opacity: 0.5;
+  background-color: rgba(0, 0, 0, 0.8)
+}
+
+#logo {
+  padding: 5px;
+  padding-left: 20px;
+}
+
+#info {
+  margin: 10px;
+  padding-left: 20px;
+  position: absolute; 
+  right: 0;
+}
+
+#vidlist {
+  position: absolute; 
+  /*height: 100%;*/
+  width: 35%;
+  top: 50px; 
+  bottom: 0px;
+  right: -35%; 
+  background-color: rgba(0, 0, 0, 0.6);
+  overflow: auto;
+}
+
+#openArrow {
+  padding: 0px;
+  margin: 0px;
+  display: block;
+}
+
+#open {
+ position: fixed;
+ bottom: 30px;
+  padding: 0px;
+  margin-left: -30px;
+ background-color: rgba(0, 0, 0, 0.7)
+}
+
+#closeArrow {
+  /*padding: 5px;*/
+  padding: 0px;
+  margin: 0px;
+  display: block;
+}
+
+#close {
+  display: none;
+ position: fixed;
+ bottom: 30px;
+  padding: 0px;
+  margin: 0px;
+  margin-left: -30px;
+ background-color: rgba(0, 0, 0, 0.7)
 }
 
 .infoBox {
@@ -27,13 +155,8 @@ html, body, #map-canvas {
 #wrapper { position: relative; height: 100%;}
 
 .listbox {
-	margin-top: 8px; 
-  margin-left: -170px;
 	padding: 5px;
-}
-
-.listbox div {
-  margin: 20px;
+  margin-top: 0px;
 }
  
 .listbox h3 {
@@ -49,18 +172,24 @@ html, body, #map-canvas {
 }
  
 .listbox li p {
-	margin: 8px;
-  font: 200 12px/1.5 Georgia, Times New Roman, serif;
+	margin: 1px;
+  font: 200 12px/1.5 Helvetica, Verdana, sans-serif;
   color: #aaa;
 }
  
 .listbox li {
   padding: 10px;
   overflow: scroll;
+  background-color: rgba(0, 0, 0, 0.5);
+  margin: 4px;
 }
  
 .listbox li:hover {
   background: #111;
   cursor: pointer;
-  background: url('../../static/transparent.png')
+  background-color: rgba(0, 0, 0, 0.9);
+}
+
+#close, #open, #info, #cross:hover {
+  cursor: pointer;
 }

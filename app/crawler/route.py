@@ -1,4 +1,4 @@
-from geo import City
+from app.crawler.geo import City
 from geopy import Nominatim
 from googleapiclient.discovery import build
 import googlemaps
@@ -61,6 +61,9 @@ class Waypoint(object):
         self.lng = lng
         self.country = country
 
+    def point(self):
+        return self.lat, self.lng
+
 
 def _pick_step(routes):
     candidates = []
@@ -78,7 +81,11 @@ def _pick_step(routes):
                 if step["travel_mode"] != "TRANSIT":
                     continue
 
-                if step["transit_details"]["line"]["vehicle"]["type"] in PERMITTED_VEHICLES:
+                vehicle = step["transit_details"]["line"]["vehicle"]
+
+                if vehicle.get("type") in PERMITTED_VEHICLES:
+                    candidates.append(step)
+                elif "train" in vehicle.get("name","").lower():
                     candidates.append(step)
             except KeyError:
                 continue

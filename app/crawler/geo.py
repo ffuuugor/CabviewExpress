@@ -6,7 +6,7 @@ from geopy.distance import vincenty
 import codecs
 from collections import defaultdict
 import os
-from config import DATA_DIR
+from app.crawler.config import DATA_DIR
 
 MIN_SPEED = 15  #km/h
 MAX_SPEED = 250 #km/h
@@ -169,8 +169,7 @@ class RouteExtractor:
 
         if len(candidate_pairs) > 0:
             good_pair = sorted(candidate_pairs,
-                               key=lambda (city_from, city_to): city_from.population
-                                                                + city_to.population, reverse=True)[0]
+                               key=lambda (city_from, city_to): City.distance(city_from, city_to), reverse=True)[0]
         else:
             good_pair = None
 
@@ -180,4 +179,4 @@ class RouteExtractor:
 if __name__ == "__main__":
     extractor = RouteExtractor(os.path.join(DATA_DIR, "cities15000.txt"))
 
-    print extractor._extract_city_objects("Rotterdam Antwerpen 300 km/h, Thalys cab ride / cabinerit")
+    print extractor._extract_city_objects("Cab Ride Norway : Trondheim - Bodø (Winter) Nordland Line")
