@@ -1,3 +1,17 @@
+var positionTools = {
+  serializePosition: function(map) {
+    var center = map.getCenter();
+    var position = { lat: center.lat(), lng: center.lng(), zoom: map.getZoom() };
+    return position;
+  },
+  deserializePosition: function(obj) {
+    return {
+      center: { lat: parseFloat(obj.lat), lng: parseFloat(obj.lng) },
+      zoom: Number(obj.zoom),
+    };
+  },
+};
+
 var rides = {};
 
 var mapOptions = {
@@ -9,6 +23,13 @@ var mapOptions = {
     mapTypeIds: ['styled_map'],
   },
 };
+
+try {
+  var position = utils.url.urlParamsToObject(location.hash.slice(1));
+  Object.assign(mapOptions, positionTools.deserializePosition(position));
+} catch (e) {
+  console.log('Unable to deserialize', e);
+}
 
 var visiblePolyOptions = {
   strokeColor: '#0a0175',
@@ -83,6 +104,13 @@ function initialize() {
   var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
   map.mapTypes.set('styled_map', styledMapType);
   map.setMapTypeId('styled_map');
+
+  map.addListener(
+    'bounds_changed',
+    utils.debounce(function() {
+      location.hash = utils.url.objectToUrlParams(positionTools.serializePosition(map));
+    }, 100)
+  );
 
   $(document).on('mouseenter', '.infoBox', function() {
     map.setOptions({ scrollwheel: false });
