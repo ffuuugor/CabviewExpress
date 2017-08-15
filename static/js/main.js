@@ -5,6 +5,10 @@ var positionTools = {
     return position;
   },
   deserializePosition: function(obj) {
+    if (!obj.lat || !obj.lng || !obj.zoom) {
+      return null;
+    }
+
     return {
       center: { lat: parseFloat(obj.lat), lng: parseFloat(obj.lng) },
       zoom: Number(obj.zoom),
