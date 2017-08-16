@@ -178,20 +178,28 @@ def run():
     segments = group_by_segments(rides)
     return json_format(rides, segments)
 
+def del_ride(ride_id, obj):
+    for segm in obj["segments"]:
+        if ride_id in segm["ride_ids"]:
+                segm["ride_ids"].remove(ride_id)
+
+        obj["segments"] = [x for x in obj["segments"] if x["ride_ids"]]
+        obj["rides"] = [x for x in obj["rides"] if x["id"] != ride_id]
+
+        return obj
+
+
+def chunks(llist, n):
+    step = len(llist)/n
+
+    for i in range(0,len(llist),step):
+        yield llist[i:i+step]
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # json.dump(run(), open("../../static/test_data_live.json","w"), indent=4)
 
-    obj = json.load(open("../../static/test_data10d.json"))
-    json.dump(obj["segments"], open("../../static/final_segments.json", "w"), indent=4)
-    json.dump(obj["rides"], open("../../static/final_rides.json", "w"), indent=4)
-    # bad = "m4NQDGgOoBU"
-    # for segm in obj["segments"]:
-    #     if bad in segm["ride_ids"]:
-    #         segm["ride_ids"].remove(bad)
-    #
-    # obj["segments"] = [x for x in obj["segments"] if x["ride_ids"]]
-    # obj["rides"] = [x for x in obj["rides"] if x["id"] != bad]
-    #
-    # json.dump(obj, open("../../static/test_data10d.json", "w"), indent=4)
+    n = 20
+    obj = json.load(open("../../static/final_rides.json"))
+    for i, chunk in enumerate(chunks(obj,n)):
+        json.dump(chunk,open("../../static/data/rides_{}.json".format(i),"w"), indent=4)
