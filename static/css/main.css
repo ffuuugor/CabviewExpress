@@ -1,7 +1,9 @@
-html, body, #map-canvas { 
-	height: 100%; 
-	margin: 0; 
-	padding: 0;
+html,
+body,
+#map-canvas {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 
   max-width: 100%;
   overflow-x: hidden;
@@ -17,13 +19,13 @@ html, body, #map-canvas {
   z-index: 1;
 }
 
+.contactsLayer--hidden {
+  display: none;
+}
+
 #cross {
   display: inline-block;
   float: right;
-}
-
-#contactsLayer {
-  display: none;
 }
 
 #contactsWindow {
@@ -40,7 +42,7 @@ html, body, #map-canvas {
 }
 
 #contactsWindow a {
-  text-decoration:  underline;
+  text-decoration: underline;
   color: #ffffff;
 }
 
@@ -50,43 +52,42 @@ html, body, #map-canvas {
 }
 
 a {
-  text-decoration:  none;
+  text-decoration: none;
   color: #000000;
-} 
+}
 
 .image {
   margin: 0;
 }
 
-div.image{
-  float:left; /* important */
-  position:relative; /* important(so we can absolutely position the description div */
+div.image {
+  float: left; /* important */
+  position: relative; /* important(so we can absolutely position the description div */
 }
-div.description{
-  position:absolute; /* absolute position (so we can position it where we want)*/
-  bottom:0px; /* position will be on bottom */
-  right:0px;
+div.description {
+  position: absolute; /* absolute position (so we can position it where we want)*/
+  bottom: 0px; /* position will be on bottom */
+  right: 0px;
   margin-right: 20px;
   /* styling bellow */
-  background-color:black;
-  color:white;
-  opacity:0.9; /* transparency */
-  filter:alpha(opacity=90); /* IE transparency */
+  background-color: black;
+  color: white;
+  opacity: 0.9; /* transparency */
+  filter: alpha(opacity=90); /* IE transparency */
 }
-p.description_content{
-  padding:2px;
-  margin:0px;
+p.description_content {
+  padding: 2px;
+  margin: 0px;
   font-size: 30px;
 }
 
-
 #header {
-	position: absolute; 
-	height: 50px;
-	width: 100%;
-	top: 0px; 
-	left: 0px; 
-  background-color: rgba(0, 0, 0, 0.8)
+  position: absolute;
+  height: 50px;
+  width: 100%;
+  top: 0px;
+  left: 0px;
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 #logo {
@@ -97,19 +98,32 @@ p.description_content{
 #info {
   margin: 10px;
   padding-left: 20px;
-  position: absolute; 
+  position: absolute;
   right: 0;
 }
 
-#vidlist {
-  position: absolute; 
+.vidlist {
+  position: absolute;
   /*height: 100%;*/
+  right: 0;
   width: 35%;
-  top: 50px; 
+  top: 50px;
   bottom: 0px;
-  right: -35%; 
   background-color: rgba(0, 0, 0, 0.6);
   overflow: auto;
+  transition: right 0.3s;
+}
+
+.vidlist--hidden .close {
+  display: none;
+}
+
+.vidlist--open .open {
+  display: none;
+}
+
+.vidlist--hidden {
+  right: -35%;
 }
 
 #openArrow {
@@ -118,12 +132,12 @@ p.description_content{
   display: block;
 }
 
-#open {
- position: fixed;
- bottom: 30px;
+.open {
+  position: fixed;
+  bottom: 30px;
   padding: 0px;
   margin-left: -30px;
- background-color: rgba(0, 0, 0, 0.7)
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 #closeArrow {
@@ -133,14 +147,13 @@ p.description_content{
   display: block;
 }
 
-#close {
-  display: none;
- position: fixed;
- bottom: 30px;
+.close {
+  position: fixed;
+  bottom: 30px;
   padding: 0px;
   margin: 0px;
   margin-left: -30px;
- background-color: rgba(0, 0, 0, 0.7)
+  background-color: rgba(0, 0, 0, 0.7);
 }
 
 .infoBox {
@@ -152,44 +165,47 @@ p.description_content{
   overflow: auto;
 }
 
-#wrapper { position: relative; height: 100%;}
+#wrapper {
+  position: relative;
+  height: 100%;
+}
 
 .listbox {
-	padding: 5px;
+  padding: 5px;
   margin-top: 0px;
 }
- 
+
 .listbox h3 {
   font: bold 20px/1.5 Helvetica, Verdana, sans-serif;
   color: #eee;
-  margin: 8px; 
+  margin: 8px;
 }
- 
+
 .listbox li img {
   float: left;
   opacity: 1;
   margin: 0 15px 0 0;
 }
- 
+
 .listbox li p {
-	margin: 1px;
+  margin: 1px;
   font: 200 12px/1.5 Helvetica, Verdana, sans-serif;
   color: #aaa;
 }
- 
+
 .listbox li {
   padding: 10px;
   overflow: scroll;
   background-color: rgba(0, 0, 0, 0.5);
   margin: 4px;
 }
- 
+
 .listbox li:hover {
   background: #111;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.9);
 }
 
-#close, #open, #info, #cross:hover {
+.icon {
   cursor: pointer;
 }

@@ -1,4 +1,4 @@
-var map_style = [
+const map_style = [
   {
     featureType: 'all',
     elementType: 'geometry.fill',
@@ -168,3 +168,33 @@ var map_style = [
     ],
   },
 ];
+
+const visiblePolyOptions = {
+  strokeColor: '#0a0175',
+  strokeOpacity: 0.2,
+  strokeWeight: 6,
+};
+
+const redPolyOptions = {
+  strokeColor: '#e87306',
+  strokeOpacity: 1,
+  strokeWeight: 6,
+  zIndex: 100,
+};
+
+const invisiblePolyOptions = {
+  strokeColor: '#0a0175',
+  strokeOpacity: 0,
+  strokeWeight: 6,
+  zIndex: 2,
+};
+
+const mapOptions = {
+  center: { lat: 50.912262, lng: 8.512218 },
+  scrollwheel: true,
+  zoom: 6,
+  disableDefaultUI: true,
+  mapTypeControlOptions: {
+    mapTypeIds: ['styled_map'],
+  },
+};
