@@ -61,4 +61,35 @@ var utils = {
       };
     },
   },
+  requestIdleCallback(callback) {
+    // poor man's polyfill
+    if (window.requestIdleCallback) {
+      return window.requestIdleCallback(callback);
+    } else {
+      return setTimeout(callback, 0);
+    }
+  },
+  asyncForEach(arr, callback, batchSize = 25) {
+    /*
+      Same as Array.prototype.forEach, but takes a pause after
+      %batchSize% elements.
+    */
+    const inner = currentIndex => {
+      callback(arr[currentIndex], currentIndex, arr);
+
+      if (currentIndex === arr.length - 1) {
+        return;
+      }
+
+      if (currentIndex % batchSize === 0) {
+        this.requestIdleCallback(() => {
+          inner(currentIndex + 1);
+        });
+      } else {
+        inner(currentIndex + 1);
+      }
+    };
+
+    inner(0);
+  },
 };

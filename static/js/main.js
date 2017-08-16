@@ -7,7 +7,7 @@ const fetchMapData = () =>
 const renderMap = (map, rides, segments) => {
   const rideById = {};
 
-  rides.forEach(ride => {
+  utils.asyncForEach(rides, ride => {
     const path = google.maps.geometry.encoding.decodePath(ride.path);
     const poly = new google.maps.Polyline(visiblePolyOptions);
 
@@ -17,7 +17,7 @@ const renderMap = (map, rides, segments) => {
     rideById[ride.id] = ride;
   });
 
-  segments.forEach(segment => {
+  utils.asyncForEach(segments, segment => {
     const path = google.maps.geometry.encoding.decodePath(segment.path);
     const poly = new google.maps.Polyline(invisiblePolyOptions);
 
@@ -67,7 +67,9 @@ const initialize = () => {
   );
 
   fetchMapData().then(([rides, segments]) => {
-    renderMap(map, rides, segments);
+    utils.requestIdleCallback(() => {
+      renderMap(map, rides, segments);
+    });
   });
 };
 
