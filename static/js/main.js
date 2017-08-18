@@ -15,17 +15,9 @@ const renderMap = (map, rides, segments) => {
 
     poly.setMap(map);
     poly.setPath(path);
-  });
-
-  utils.asyncForEach(segments, segment => {
-    const path = google.maps.geometry.encoding.decodePath(segment.path);
-    const poly = new google.maps.Polyline(invisiblePolyOptions);
-
-    poly.setMap(map);
-    poly.setPath(path);
 
     google.maps.event.addListener(poly, 'click', event => {
-      router.updateHash({ path: segment.path });
+      router.updateHash({ path: ride.segment_path });
     });
   });
 };
@@ -72,6 +64,12 @@ const initializeMap = () => {
     state.rideById = rideById;
     rides.forEach(ride => {
       rideById[ride.id] = ride;
+    });
+
+    segments.forEach(segment => {
+      segment.ride_ids.forEach(ride_id => {
+        rideById[ride_id].segment_path = segment.path;
+      });
     });
 
     state.segments = segments;
