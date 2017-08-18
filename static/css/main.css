@@ -9,6 +9,23 @@ body,
   overflow-x: hidden;
 }
 
+.popup {
+  position: absolute;
+  top: 20%;
+  bottom: 20%;
+  left: 20%;
+  right: 20%;
+  background-color: #000000;
+  font: 200 18px/1.5 Helvetica, Verdana, sans-serif;
+  color: #ffffff;
+  padding: 20px;
+  overflow: auto;
+}
+
+.popup--hidden {
+  display: none;
+}
+
 #contactsLayer {
   height: 100%;
   width: 100%;
@@ -114,6 +131,10 @@ p.description_content {
   transition: right 0.3s;
 }
 
+.is-video .vidlist {
+  display: none;
+}
+
 .vidlist--hidden .close {
   display: none;
 }
@@ -208,4 +229,18 @@ p.description_content {
 
 .icon {
   cursor: pointer;
+}
+
+.video-view .video-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.video-view a {
+  color: white;
+  font-size: 20px;
+}
+
+.is-video #map-canvas {
+  pointer-events: none;
 }

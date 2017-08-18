@@ -16,12 +16,25 @@ var utils = {
   },
   url: {
     objectToUrlParams: function(obj) {
-      return Object.keys(obj).map(key => key + '=' + encodeURIComponent(obj[key])).join('&');
+      return Object.keys(obj)
+        .map(key => {
+          if (key && obj[key]) {
+            return key + '=' + encodeURIComponent(obj[key]);
+          }
+          return '';
+        })
+        .join('&');
     },
     urlParamsToObject: function(params) {
+      if (params.length === 0) {
+        return {};
+      }
+
       return params.split('&').reduce((acc, keyValue) => {
         var parts = keyValue.split('=');
-        acc[parts[0]] = parts[1];
+        if (parts.length === 2) {
+          acc[parts[0]] = decodeURIComponent(parts[1]);
+        }
         return acc;
       }, {});
     },
