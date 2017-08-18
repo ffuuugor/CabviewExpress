@@ -17,7 +17,22 @@ const renderMap = (map, rides, segments) => {
     poly.setPath(path);
 
     google.maps.event.addListener(poly, 'click', event => {
-      router.updateHash({ path: ride.segment_path });
+      const bestSegmentPath = ride.segment_paths.find(segment_path => {
+        const path = google.maps.geometry.encoding.decodePath(segment_path);
+        const polyline = new google.maps.Polyline(visiblePolyOptions);
+        polyline.setPath(path);
+        return google.maps.geometry.poly.isLocationOnEdge(event.latLng, polyline, 0.01);
+      });
+
+      if (!bestSegmentPath) {
+        // if we couldn't find close enough smaller segment,
+        // then let's just show the first one
+        console.warn('Close enough');
+        router.updateHash({ path: ride.segment_paths[0] });
+        return;
+      }
+
+      router.updateHash({ path: bestSegmentPath });
     });
   });
 };
@@ -68,7 +83,10 @@ const initializeMap = () => {
 
     segments.forEach(segment => {
       segment.ride_ids.forEach(ride_id => {
-        rideById[ride_id].segment_path = segment.path;
+        if (!rideById[ride_id].segment_paths) {
+          rideById[ride_id].segment_paths = [];
+        }
+        rideById[ride_id].segment_paths.push(segment.path);
       });
     });
 
