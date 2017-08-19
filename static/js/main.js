@@ -113,7 +113,11 @@ const UI = {
   },
 
   renderVideo(rideId) {
-    console.log('Render', rideId);
+    if (state.currentRide === rideId) {
+      return;
+    }
+
+    state.currentRide = rideId;
     document.querySelector('.js-video-wrapper').innerHTML = `
       <iframe
         width="100%"
@@ -156,6 +160,7 @@ const UI = {
     element.classList.toggle('popup--hidden', !shouldShow);
 
     if (!shouldShow) {
+      state.currentRide = '';
       element.querySelector('.js-video-wrapper').innerHTML = '';
     }
   },
@@ -219,7 +224,6 @@ const router = {
   },
 
   _navigate() {
-    console.log('_navigate');
     try {
       const params = this.getParams();
 
